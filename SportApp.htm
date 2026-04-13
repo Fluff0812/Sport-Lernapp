@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sport LK BW Ultimate - 15 Pkt Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --accent: #0ea5e9; --bg: #020617; }
+        body { background-color: var(--bg); color: #f1f5f9; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.5rem; }
+        .tab-active { color: var(--accent); border-bottom: 3px solid var(--accent); font-weight: 900; }
+        .card-inner { transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer; min-height: 180px; }
+        .flipped { transform: rotateY(180deg); }
+        .front, .back { backface-visibility: hidden; position: absolute; width: 100%; height: 100%; padding: 1.5rem; border-radius: 1rem; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 0.9rem; }
+        .front { background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.1); }
+        .back { transform: rotateY(180deg); background: #0c4a6e; border: 2px solid var(--accent); color: white; }
+        .curve { transition: d 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        .zoom-node { transition: all 0.3s ease; cursor: pointer; border-left: 4px solid transparent; }
+        .zoom-node:hover { background: rgba(14, 165, 233, 0.15); border-left-color: var(--accent); padding-left: 1.5rem; }
+        .bar-anim { transition: width 1s ease-in-out; }
+    </style>
+</head>
+<body class="p-2 md:p-10">
+
+<div class="max-w-6xl mx-auto">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-5xl font-black text-white tracking-tighter italic">SPORT LK <span class="text-sky-500">BW MASTER</span></h1>
+        <p class="text-slate-400 text-xs md:text-sm mt-2 uppercase tracking-[0.2em]">Theorie & Methodik | Biomechanik | Anatomie</p>
+    </header>
+
+    <nav class="flex justify-start md:justify-center overflow-x-auto no-scrollbar gap-4 md:gap-8 mb-8 border-b border-slate-800 pb-2">
+        <button onclick="show('anatomie')" id="btn-anatomie" class="pb-2 px-2 whitespace-nowrap transition-all">Muskel-Zoom</button>
+        <button onclick="show('methode')" id="btn-methode" class="pb-2 px-2 whitespace-nowrap transition-all">Trainingsmethodik</button>
+        <button onclick="show('bl')" id="btn-bl" class="pb-2 px-2 whitespace-nowrap transition-all">Bewegungslehre</button>
+        <button onclick="show('sprung')" id="btn-sprung" class="pb-2 px-2 whitespace-nowrap transition-all">Sprunganalyse</button>
+        <button onclick="show('quiz')" id="btn-quiz" class="pb-2 px-2 whitespace-nowrap transition-all">Karteikarten</button>
+    </nav>
+
+    <div id="content" class="min-h-[60vh]"></div>
+</div>
+
+<script>
+const content = {
+    anatomie: `
+        <div class="grid lg:grid-cols-3 gap-6 animate-in fade-in duration-500">
+            <div class="lg:col-span-2 glass p-6">
+                <h2 class="text-xl font-bold text-sky-400 mb-6 flex items-center gap-2">🔍 Interaktiver Muskel-Aufbau (Klick zum Zoomen)</h2>
+                <div class="space-y-3">
+                    <div onclick="updateZoom(1)" class="zoom-node p-4 bg-slate-800/40 rounded-xl"><b>1. Skelettmuskel</b> <span class="text-xs text-slate-500 block">Das gesamte Organ (z.B. Bizeps)</span></div>
+                    <div id="z1" class="hidden pl-6 border-l border-slate-700 space-y-3">
+                        <div onclick="updateZoom(2)" class="zoom-node p-4 bg-slate-800/30 rounded-xl"><b>2. Muskelfaserbündel</b> <span class="text-xs text-slate-500 block">Zusammenfassung vieler Zellen</span></div>
+                        <div id="z2" class="hidden pl-6 border-l border-slate-700 space-y-3">
+                            <div onclick="updateZoom(3)" class="zoom-node p-4 bg-slate-800/20 rounded-xl"><b>3. Muskelfaser (Zelle)</b> <span class="text-xs text-slate-500 block">Hier liegen Myofibrillen & Zellkerne</span></div>
+                            <div id="z3" class="hidden pl-6 border-l border-slate-700 space-y-3">
+                                <div class="p-5 bg-sky-900/20 border border-sky-500/30 rounded-xl shadow-lg">
+                                    <b class="text-white text-lg block mb-2">4. Das Sarkomer (Mikro-Ebene)</b>
+                                    <p class="text-sm leading-relaxed">
+                                        • <b>Aktin:</b> Dünnes Filament.<br>
+                                        • <b>Myosin:</b> Dickes Filament mit beweglichen Köpfen.<br>
+                                        • <b>Titin:</b> Elastische Feder, zentriert das Myosin.<br>
+                                        <span class="mt-2 block p-2 bg-black/30 rounded italic text-sky-300">Gleit-Filament-Theorie: Aktin & Myosin gleiten ineinander &rarr; Muskel verkürzt sich.</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass p-6 space-y-6">
+                <h2 class="text-sky-400 font-bold border-b border-slate-700 pb-2 italic">Kraft-Basics</h2>
+                <div class="space-y-4 text-sm">
+                    <div class="p-3 bg-slate-900/50 rounded-lg">
+                        <b>Relativkraft:</b> <br> <span class="text-sky-400 font-mono">Maximalkraft / Körpergewicht</span>
+                    </div>
+                    <div>
+                        <b>Agonist vs. Antagonist:</b>
+                        <p class="text-xs text-slate-400">Spieler (beugt) und Gegenspieler (lässt nach/bremst).</p>
+                    </div>
+                    <div>
+                        <b>Fasertypen:</b>
+                        <ul class="text-xs mt-1 space-y-1">
+                            <li class="flex justify-between"><span>Typ I (ST)</span><span class="text-red-400">Rot / Ausdauer</span></li>
+                            <li class="flex justify-between"><span>Typ IIa (FTO)</span><span class="text-sky-400">Schnell / Ausdauer</span></li>
+                            <li class="flex justify-between"><span>Typ IIx (FTG)</span><span class="text-white font-bold">Explosiv</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    methode: `
+        <div class="glass p-6 animate-in fade-in duration-500">
+            <h2 class="text-2xl font-bold text-sky-400 mb-6 uppercase tracking-tight">Methoden des Maximalkrafttrainings</h2>
+            <div class="grid lg:grid-cols-2 gap-8">
+                <div class="space-y-3">
+                    <button onclick="updateMethode('hyper')" class="w-full text-left p-4 rounded-xl border border-slate-700 bg-slate-800/50 hover:border-sky-500 transition shadow-lg group">
+                        <b class="text-white group-hover:text-sky-400 transition">Muskelaufbau (Hypertrophie)</b>
+                        <p class="text-xs text-slate-400">Ziel: Zunahme des Muskelquerschnitts.</p>
+                    </button>
+                    <button onclick="updateMethode('ik')" class="w-full text-left p-4 rounded-xl border border-slate-700 bg-slate-800/50 hover:border-red-500 transition shadow-lg group">
+                        <b class="text-white group-hover:text-red-400 transition">IK-Training (Intramuskulär)</b>
+                        <p class="text-xs text-slate-400">Ziel: Rekrutierung & Frequenzierung verbessern.</p>
+                    </button>
+                    <button onclick="updateMethode('pyramide')" class="w-full text-left p-4 rounded-xl border border-slate-700 bg-slate-800/50 hover:border-emerald-500 transition shadow-lg group">
+                        <b class="text-white group-hover:text-emerald-400 transition">Pyramidentraining</b>
+                        <p class="text-xs text-slate-400">Kombination aus Querschnitt & Nervensystem.</p>
+                    </button>
+                </div>
+                <div id="methode-detail" class="bg-slate-950/50 p-6 rounded-2xl border border-slate-800 shadow-inner">
+                    <p class="text-center text-slate-500 py-10 italic">Wähle links eine Methode, um Intensitäts-Diagramme und Belastungsnormative zu sehen.</p>
+                </div>
+            </div>
+        </div>
+    `,
+    bl: `
+        <div class="glass p-8 animate-in slide-in-from-right duration-500">
+            <h2 class="text-2xl font-bold text-sky-400 mb-8 text-center uppercase tracking-widest italic">Bewegungslehre Master-View</h2>
+            <div class="grid md:grid-cols-2 gap-10">
+                <div class="space-y-4">
+                    <h3 class="font-black text-white border-b border-slate-700 pb-2">Morphologie (Meinel)</h3>
+                    <div class="grid grid-cols-1 gap-3 text-xs">
+                        <div class="p-3 bg-slate-800/40 rounded-lg"><b>Rhythmus:</b> Zeitliche Ordnung der Bewegung.</div>
+                        <div class="p-3 bg-slate-800/40 rounded-lg"><b>Kopplung:</b> Verbindung von Arm-, Rumpf- und Beinarbeit.</div>
+                        <div class="p-3 bg-slate-800/40 rounded-lg"><b>Fluss:</b> Kontinuität & Rundheit des Verlaufs.</div>
+                        <div class="p-3 bg-slate-800/40 rounded-lg"><b>Präzision / Umfang / Tempo / Stärke</b></div>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <h3 class="font-black text-sky-400 border-b border-sky-900 pb-2">Funktionalität (Göhner)</h3>
+                    <div class="space-y-4">
+                        <div class="p-4 bg-sky-900/20 rounded-xl">
+                            <b class="text-white text-sm">Vorbereitungsphase</b>
+                            <p class="text-xs text-slate-400 mt-1">Zweck: Schaffung optimaler Bedingungen (z.B. Ausholen, Anlauf).</p>
+                        </div>
+                        <div class="p-4 bg-sky-900/30 rounded-xl border-l-4 border-sky-500">
+                            <b class="text-white text-sm">Hauptphase</b>
+                            <p class="text-xs text-slate-400 mt-1">Zweck: Unmittelbarer Vollzug der Bewegungsaufgabe.</p>
+                        </div>
+                        <div class="p-4 bg-sky-900/20 rounded-xl">
+                            <b class="text-white text-sm">Endphase</b>
+                            <p class="text-xs text-slate-400 mt-1">Zweck: Erreichen eines stabilen Gleichgewichts.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `,
+    sprung: `
+        <div class="glass p-6 animate-in zoom-in duration-500">
+            <h2 class="text-2xl font-bold text-sky-400 text-center mb-6">SPRUNGANALYSE (KRAFT-ZEIT)</h2>
+            <div class="flex justify-center gap-3 mb-8">
+                <button onclick="draw('sj')" class="px-6 py-2 glass rounded-xl hover:bg-sky-500/20 text-xs font-bold uppercase">SJ</button>
+                <button onclick="draw('cmj')" class="px-6 py-2 glass rounded-xl hover:bg-sky-500/20 text-xs font-bold uppercase">CMJ</button>
+                <button onclick="draw('dj')" class="px-6 py-2 glass rounded-xl hover:bg-sky-500/20 text-xs font-bold uppercase">DJ</button>
+            </div>
+            <div class="bg-slate-900/80 p-6 rounded-3xl border border-slate-800 mb-8 relative shadow-2xl overflow-hidden">
+                <svg viewBox="0 0 500 250" class="w-full h-72">
+                    <line x1="50" y1="150" x2="450" y2="150" stroke="#ef4444" stroke-width="2" stroke-dasharray="6" />
+                    <text x="455" y="155" fill="#ef4444" font-size="12" font-weight="bold">FG (Gewicht)</text>
+                    <path id="curve" d="" fill="none" stroke="#0ea5e9" stroke-width="5" stroke-linecap="round" class="curve" />
+                    <line x1="50" y1="220" x2="50" y2="20" stroke="white" stroke-width="2" />
+                    <line x1="50" y1="220" x2="480" y2="220" stroke="white" stroke-width="2" />
+                </svg>
+            </div>
+            <div id="analysis-box" class="grid md:grid-cols-3 gap-4"></div>
+        </div>
+    `,
+    quiz: `
+        <div class="grid md:grid-cols-3 gap-4 overflow-y-auto max-h-[60vh] p-2">
+            ${createCard("Relativkraft Definition?", "Die Maximalkraft im Verhältnis zum eigenen Körpergewicht. Wichtig bei Sportarten wie Turnen.")}
+            ${createCard("Zweck des Ausholens (Göhner)?", "Optimierung des Beschleunigungsweges & Nutzung der Anfangskraft durch den DVZ.")}
+            ${createCard("Warum sinkt die CMJ Kurve?", "Entlastung der Bodenplatte durch die abwärtsgerichtete Beschleunigung beim Ausholen.")}
+            ${createCard("Was ist die reaktive Arbeitsweise?", "Kombination aus exzentrischer und konzentrischer Arbeit (Dehnungs-Verkürzungs-Zyklus).")}
+            ${createCard("Unterschied FTO zu FTG?", "FTO (IIa) ist schnell & oxidativ (ausdauernder). FTG (IIx) ist rein explosiv.")}
+            ${createCard("Was ist intramuskuläre Koordination?", "Die Fähigkeit, innerhalb eines Muskels eine hohe Anzahl von motorischen Einheiten gleichzeitig zu aktivieren.")}
+            ${createCard("Funktion von Titin?", "Es wirkt wie eine elastische Feder, zentriert das Myosin und schützt vor Überdehnung.")}
+            ${createCard("Definition Kraftausdauer?", "Ermüdungswiderstandsfähigkeit bei Belastungen über 30% der Maximalkraft.")}
+            ${createCard("Vorteil des DVZ?", "Nutzung elastischer Energie und des Dehnungsreflexes führt zu höherer Absprunggeschwindigkeit.")}
+            ${createCard("IK-Training Parameter?", "Intensität: 90-100%, Wiederholungen: 1-3, Pausen: 3-5 Minuten.")}
+            ${createCard("Was ist Startkraft?", "Der Kraftanstieg innerhalb der ersten 30 Millisekunden einer Kontraktion.")}
+            ${createCard("Morphologisch: Fluss?", "Die Kontinuität einer Bewegung ohne Brüche oder Stockungen.")}
+        </div>
+    `
+};
+
+function updateZoom(step) {
+    document.getElementById('z1').classList.toggle('hidden', step < 1);
+    document.getElementById('z2').classList.toggle('hidden', step < 2);
+    document.getElementById('z3').classList.toggle('hidden', step < 3);
+}
+
+const methodenData = {
+    hyper: { title: "Muskelaufbau", i: "75%", w: "8-12", s: "3-5", p: "2-3 Min", color: "#0ea5e9", d: "Hypertrophie: Dickenwachstum der Muskelfasern (Anatomische Anpassung)." },
+    ik: { title: "IK-Training", i: "95%", w: "1-3", s: "3-6", p: "5 Min", color: "#ef4444", d: "Neuronale Anpassung: Mehr motorische Einheiten werden zeitgleich aktiviert." },
+    pyramide: { title: "Pyramide", i: "60-100%", w: "12-1", s: "4-6", p: "3 Min", color: "#10b981", d: "Allrounder: Kombiniert Hypertrophie und IK-Training durch steigende Last." }
+};
+
+function updateMethode(k) {
+    const m = methodenData[k];
+    document.getElementById('methode-detail').innerHTML = `
+        <h3 class="text-xl font-bold text-white mb-4">${m.title}</h3>
+        <div class="space-y-6">
+            <div>
+                <div class="flex justify-between text-xs mb-2"><span>Intensität</span><span class="font-bold text-sky-400">${m.i}</span></div>
+                <div class="w-full bg-slate-800 h-4 rounded-full overflow-hidden border border-white/5">
+                    <div class="bar-anim h-full shadow-[0_0_15px_rgba(0,0,0,0.5)]" style="width: ${m.i.includes('-') ? '80%' : m.i}; background-color: ${m.color}"></div>
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="bg-slate-800 p-3 rounded-xl"><b>Wdh.</b><br><span class="text-xs">${m.w}</span></div>
+                <div class="bg-slate-800 p-3 rounded-xl"><b>Sätze</b><br><span class="text-xs">${m.s}</span></div>
+                <div class="bg-slate-800 p-3 rounded-xl"><b>Pause</b><br><span class="text-xs">${m.p}</span></div>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed italic border-l-2 border-slate-700 pl-3">${m.d}</p>
+        </div>
+    `;
+}
+
+const curves = {
+    sj: { d: "M 50 150 L 150 150 C 180 150 200 40 230 40 L 260 220 L 320 220 C 350 220 380 80 410 80 C 430 80 440 220 450 220", a: ["Konzentrisch","Direkter Start aus FG","Lande-Peak"] },
+    cmj: { d: "M 50 150 C 80 150 100 195 130 195 C 180 195 210 20 240 20 L 270 220 L 330 220 C 360 220 390 60 410 60 C 430 60 440 220 450 220", a: ["Entlastung (Ausholen)","DVZ-Effekt (Höherer Peak)","Abstoßphase"] },
+    dj: { d: "M 50 220 L 100 220 C 115 40 135 10 155 10 C 175 10 195 220 230 220 L 300 220 C 330 220 360 40 380 40 C 400 40 420 220 430 220", a: ["Flugphase (Kraft 0)","Extremer Reaktiv-Peak","Kürzester Kontakt"] }
+};
+
+function draw(id) {
+    document.getElementById('curve').setAttribute('d', curves[id].d);
+    document.getElementById('analysis-box').innerHTML = curves[id].a.map(txt => `<div class="p-3 bg-slate-800/60 rounded-xl text-[10px] text-center font-bold border border-slate-700 text-sky-400 uppercase tracking-tighter shadow-lg">${txt}</div>`).join('');
+}
+
+function createCard(q, a) {
+    return `<div class="card-inner relative" onclick="this.classList.toggle('flipped')"><div class="front glass"><b>${q}</b></div><div class="back">${a}</div></div>`;
+}
+
+function show(id) {
+    document.getElementById('content').innerHTML = content[id];
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('tab-active'));
+    document.getElementById('btn-' + id).classList.add('tab-active');
+    if(id === 'sprung') draw('cmj');
+    if(id === 'methode') updateMethode('hyper');
+}
+
+show('anatomie');
+</script>
+
+</body>
+</html>
